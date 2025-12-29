@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { fetchPosts } from "../api/api";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { NavLink } from "react-router-dom";
 
 const FetchRq = () => {
   const [page, setPage] = useState(0);
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["posts",page],
+    queryKey: ["posts", page],
     queryFn: () => fetchPosts(page),
+    placeholderData : keepPreviousData,
   });
 
   const handlePrev = () => {
-    setPage((prev) => prev - 1);
+    setPage((prev) => prev - 2);
   };
 
   const handleNext = () => {
-    setPage((prev) => prev + 1);
+    setPage((prev) => prev + 2);
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -45,8 +46,10 @@ const FetchRq = () => {
         style={{ display: "flex", marginTop: "10px" }}
         className="pagination-section container"
       >
-        <button onClick={handlePrev} disabled={page === 0}>Prev</button>
-        <h2 style={{ color: "white" }}>{page}</h2>
+        <button onClick={handlePrev} disabled={page === 0}>
+          Prev
+        </button>
+        <h2 style={{ color: "white" }}>{(page / 2)+1}</h2>
         <button onClick={handleNext}>Next</button>
       </div>
     </div>
