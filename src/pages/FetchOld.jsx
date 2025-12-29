@@ -18,7 +18,6 @@ const FetchOld = () => {
     getPostData();
   }, []);
 
-  console.log("Posts", posts)
 
   return (
     <div>
