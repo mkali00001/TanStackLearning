@@ -17,6 +17,10 @@ const Header = () => {
                     <NavLink to='/rq'>FetchRq</NavLink>
 
                 </li>
+                 <li>
+                    <NavLink to='/infinite'>Infinite Scroll</NavLink>
+
+                </li>
             </ul>
         </div>
    </header>
