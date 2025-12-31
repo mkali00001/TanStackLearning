@@ -1,6 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { fetchPosts } from "../api/api";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { deletePost, fetchPosts } from "../api/api";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { NavLink } from "react-router-dom";
 
 const FetchRq = () => {
@@ -8,7 +13,7 @@ const FetchRq = () => {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["posts", page],
     queryFn: () => fetchPosts(page),
-    placeholderData : keepPreviousData,
+    placeholderData: keepPreviousData,
   });
 
   const handlePrev = () => {
@@ -18,6 +23,19 @@ const FetchRq = () => {
   const handleNext = () => {
     setPage((prev) => prev + 2);
   };
+
+  // mutation function to delete the post
+  const queryClient = useQueryClient();
+  const deleteMutation = useMutation({
+    mutationFn: (id) => {
+      return deletePost(id);
+    },
+    onSuccess: (data, id) => {
+      queryClient.setQueryData(["posts", page], (oldQueryData) => {
+        return oldQueryData.filter((post) => post?.id !== id);
+      });
+    },
+  });
 
   if (isLoading) return <div>Loading...</div>;
   if (isError)
@@ -34,7 +52,14 @@ const FetchRq = () => {
               <p>{post?.body}</p>
               <div style={{ display: "flex", justifyContent: "end" }}>
                 <NavLink to={`/rq/${post?.id}`}>
-                  <button>View Detail</button>{" "}
+                  <button>View Detail</button>
+                </NavLink>
+                <NavLink
+                  onClick={() => {
+                    deleteMutation.mutate(post?.id);
+                  }}
+                >
+                  <button className="deletebtn">Delete</button>
                 </NavLink>
               </div>
             </li>
@@ -49,7 +74,7 @@ const FetchRq = () => {
         <button onClick={handlePrev} disabled={page === 0}>
           Prev
         </button>
-        <h2 style={{ color: "white" }}>{(page / 2)+1}</h2>
+        <h2 style={{ color: "white" }}>{page / 2 + 1}</h2>
         <button onClick={handleNext}>Next</button>
       </div>
     </div>

@@ -8,10 +8,10 @@ export const fetchPosts = async (page) => {
   return res.status === 200 ? res.data : [];
 };
 
-export const fetchPostById = async (id)=>{
-  const res = await api.get(`/posts/${id}`)
+export const fetchPostById = async (id) => {
+  const res = await api.get(`/posts/${id}`);
   return res.status === 200 ? res.data : {};
-}
+};
 
 // const getPostData = async () => {
 //   try {
@@ -21,3 +21,9 @@ export const fetchPostById = async (id)=>{
 //     return [];
 //   }
 // };
+
+// delete post
+export const deletePost = async (id) => {
+  const res = await api.delete(`/posts/${id}`);
+  return res;
+};
