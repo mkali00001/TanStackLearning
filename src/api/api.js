@@ -27,3 +27,9 @@ export const deletePost = async (id) => {
   const res = await api.delete(`/posts/${id}`);
   return res;
 };
+
+// update post
+export const updatePost = async (id) => {
+  const res = await api.patch(`/posts/${id}`, {title:'updated title!'});
+  return res;
+};

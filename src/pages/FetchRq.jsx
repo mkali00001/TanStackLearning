@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { deletePost, fetchPosts } from "../api/api";
+import { deletePost, fetchPosts, updatePost } from "../api/api";
 import {
   keepPreviousData,
   useMutation,
@@ -37,6 +37,20 @@ const FetchRq = () => {
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: (id) => {
+      return updatePost(id);
+    },
+    onSuccess: (apiData, postId) => {
+      console.log(apiData, postId)
+      queryClient.setQueryData(["posts", page], (postsData) => {
+        return postsData?.map((curPost)=>{
+          return curPost?.id === postId ? {...curPost, title:apiData.data.title} : curPost;
+        })
+      });
+    },
+  });
+
   if (isLoading) return <div>Loading...</div>;
   if (isError)
     return <div>Error: {error.message || "Something went wrong!"}</div>;
@@ -53,6 +67,13 @@ const FetchRq = () => {
               <div style={{ display: "flex", justifyContent: "end" }}>
                 <NavLink to={`/rq/${post?.id}`}>
                   <button>View Detail</button>
+                </NavLink>
+                <NavLink
+                  onClick={() => {
+                    updateMutation.mutate(post?.id);
+                  }}
+                >
+                  <button className="deletebtn">Update</button>
                 </NavLink>
                 <NavLink
                   onClick={() => {
